@@ -28,7 +28,7 @@ enum Error_skan_var
 
 /*!
 Оформляет ввод коефициентов и принимает их значение + отслеживает завершение программы
-\param *a,*b,*c double Указатели на переменные для хранения коэфициентов
+\param[out] *a,*b,*c double Указатели на переменные для хранения коэфициентов
 \return в соответствии Error_skan_var
 */
 int abc_scan(double* a, double* b, double* c);
@@ -36,8 +36,8 @@ int abc_scan(double* a, double* b, double* c);
 /*!
 Оформляет ввод некоторого значения и проверяет ввод на ошибки.
 Так же она инициализирует завершение программы в зависимости от ввода.
-\param var_name строчка с названием переменной
-\param *var указатель на переменную для записи ввода
+\param[in] var_name строчка с названием переменной
+\param[out] *var указатель на переменную для записи ввода
 \return в соответствии Error_skan_var
 */
 int skan_variable(char var_name[], double* var);
@@ -50,11 +50,11 @@ int end_question(void);
 
 /*!
 Проверяет значение на переполнение и выводит оповещающее сообщение (оно может меняться в зависимости от введённых параметров), если это произошло
-\param nom число на проверку
-\param befor_variable сообщение перед выводом названия переменной
-\param name_variable  название переменной
-\param after_variable сообщение после вывода названия переменной
-\param *overcharge указатель на переменную для записи значения (true - если число переполнено folse - не записывается для удобности определения наличия переполненного числа при применении к группе чисел)
+\param[in] nom число на проверку
+\param[in] befor_variable сообщение перед выводом названия переменной
+\param[in] name_variable  название переменной
+\param[in] after_variable сообщение после вывода названия переменной
+\param[out] *overcharge указатель на переменную для записи значения (true - если число переполнено folse - не записывается для удобности определения наличия переполненного числа при применении к группе чисел)
 */
 void overcharge_alarm (double nom, char befor_variable[], char name_variable[], char after_variable[], bool* overcharge);
 
@@ -74,24 +74,24 @@ void x_lim_over_print(double x_1, double x_2, int root_count);
 
 /*!
 Решает квадратное уравнение
-\param a,b,c коэфициенты уравнения
-\param x_1,x_2 корни уравнения
+\param[in] a,b,c коэфициенты уравнения
+\param[out] x_1,x_2 корни уравнения
 \return соответствует Error_reshalka
 */
 int qadrat ( double a, double b, double c, double* x_1, double* x_2);
 
 /*!
 Решает линейное уравнение
-\param b,c коэфициенты уравнения
-\param *x указатель на переменную для записи корня
+\param[in] b,c коэфициенты уравнения
+\param[out] *x указатель на переменную для записи корня
 \return соответствует Error_reshalka
 */
 int linerial (double b, double c, double *x);
 
 /*!
 Решает квадратное/линейное уравнение, определяет бесконечность корней
-\param a,b,c коэфициенты уравнения
-\param *x_1, *x_2 указателb на переменную для записй корней
+\param[in] a,b,c коэфициенты уравнения
+\param[out] *x_1, *x_2 указателb на переменную для записй корней
 \return соответствует Error_reshalka
 */
 int reshalka (double a, double b, double c, double* x_1, double* x_2);
