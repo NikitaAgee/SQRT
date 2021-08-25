@@ -6,20 +6,28 @@ int main(void)
 
     setlocale(LC_CTYPE,"Russian"); //Для вывода руских букв
 
-    double a=0, b=0, c=0;     // Определение переменных для коэфициентов уравнения
-    double x_1=0, x_2=0;    // Определение переменных для коней
-    int reshalka_error = OK; // Определение переменной для количества корней
-    int unitest = 1;
+    double a=0, b=0, c=0;    // Определение переменных для коэфициентов уравнения
+    double x_1=0, x_2=0;     // Определение переменных для коней
+    int reshalka_error = OK;// Определение переменной для количества корней
+    int sc_chek = OK;        // Проверка ввода значений
+    int unitest_out = OK;
 
-    unitest = unitest_reshalka();
+    unitest_out = unitest();
 
-    if (unitest == 1)
+    if (unitest_out == OK)
     {
         start_print();
     }
 
-    while( (abc_scan(&a, &b, &c) == 0) && (unitest == 1)) // Ввод коэфициентов
+    while(unitest_out == OK) // Ввод коэфициентов
     {
+
+        sc_chek = abc_scan(&a, &b, &c);
+
+        if (sc_chek == END_PROGRAM)
+        {
+            break;
+        }
 
         x_1 = 0;
         x_2 = 0;
@@ -47,7 +55,4 @@ int main(void)
     end_print();
 
 }
-
-
-
 

@@ -2,15 +2,19 @@
 bool abc_lim_over_print(double a, double b, double c)
 {
 
+    assert(isnan(a));
+    assert(isnan(b));
+    assert(isnan(c));
+
     // Определение сообщения о переполнении перед выводом названия переменной, которая переполнена
-    char befor_variable[50] = "Слишком большой (по модулю) коэфициент: ";
+    char* befor_variable = "Слишком большой (по модулю) коэфициент: ";
 
     bool overflow = false; // определение выход функции
 
     // Проверка переполненных значений
-    overflow_alarm (a,  befor_variable, "a", "\n", &overflow);
-    overflow_alarm (b,  befor_variable, "b", "\n", &overflow);
-    overflow_alarm (c,  befor_variable, "c", "\n", &overflow);
+    overflow_alarm(a,  befor_variable, "a", "\n", &overflow);
+    overflow_alarm(b,  befor_variable, "b", "\n", &overflow);
+    overflow_alarm(c,  befor_variable, "c", "\n", &overflow);
 
     return overflow;
 }
@@ -18,108 +22,146 @@ bool abc_lim_over_print(double a, double b, double c)
 void x_lim_over_print(double x_1, double x_2, int root_count)
 {
 
-    char befor_variable[50] = "Слишком большой (по модулю) корень: ";
+    assert(isnan(x_1));
+    assert(isnan(x_2));
+
+    char* befor_variable = "Слишком большой (по модулю) корень: ";
     bool overflow = false;
 
     //проверка x_1 x_2
-    overflow_alarm (x_1,  befor_variable, "x_1", "\n", &overflow);
-    overflow_alarm (x_2,  befor_variable, "x_2", "\n", &overflow);
+    overflow_alarm(x_1,  befor_variable, "x_1", "\n", &overflow);
+    overflow_alarm(x_2,  befor_variable, "x_2", "\n", &overflow);
 
     if (overflow)
     {
         return;
     }
-    switch (root_count) //dsdjl rjhytq
+    switch (root_count) //Вывод значения в зависимости от root_count
     {
         case ROOTS_2:
             printf("Корни уравнения:\n");
             printf("X_1 = %.*f\n", NUM_AF_POINT, x_1);
             printf("X_2 = %.*f\n", NUM_AF_POINT, x_2);
             break;
+
         case ROOTS_1:
             printf("Корень уравнения:\n");
             printf("X = %.*f\n", NUM_AF_POINT, x_1);
             break;
+
         case ROOTS_0:
             printf("Корней нет\n");
             break;
+
         case ROOTS_INF:
             printf("Корней бесконечность\n");
             break;
+
         case ERROR:
-            printf("Что-то пошло не по плану\n");
+            printf("Что-то пошло не по плану (Код ошибки %d)\n", ERROR);
             break;
+
         default:
-            printf("Что-то пошло очень не по плану\n");
+            printf("Что-то пошло очень не по плану (Не правильный root_count = %d) \n", root_count);
     }
 }
 
 int qadrat(double a, double b, double c, double *x_1, double *x_2)
 {
-    double Dis;   /*Дискриминант (определён как double чтобы хватало)*/
-    double skDis; /*Корень дискриминанта*/
-    char befor_variable[50] = "Дискриминант слишком большой (по модулю)\n ";
+
+    assert(isinf(a));
+    assert(isinf(b));
+    assert(isinf(c));
+    assert(x_1 == 0);
+    assert(x_2 == 0);
+    assert(x_1 == x_2);
+
+    double Dis = 0;   // Дискриминант
+    double skDis = 0; // Корень дискриминанта
+    char* befor_variable = "Дискриминант слишком большой (по модулю)\n ";
     bool overflow = false;
 
-    /*Вычисление дискриминанта*/
+    // Вычисление дискриминанта
     Dis = ((b * b) - (4 * c * a));
 
-    /*Проверка переполнения Dis*/
-    overflow_alarm (Dis,  befor_variable, "Dis", "\n", &overflow);
+    // Проверка переполнения Dis
+    overflow_alarm(Dis,  befor_variable, "Dis", "\n", &overflow);
     if (overflow)
     {
         return OVERFLOW_DIS;
     }
 
     /* начало ветвления резуультатов в зависимости от дискрииминанта*/
-    else if (Dis<0)
+    else if (Dis <= -MIN_DELT)
     {
         return ROOTS_0;
     }
-    else
+    else if (fabs(Dis) < MIN_DELT)
     {
-        /*Корень дискриминанта*/
+        // Корень дискриминанта
         skDis = sqrt(Dis);
 
-        /*вычисление x_1 и x_2*/
+        // Вычисление x_1 и x_2
         *x_1 = ((-b + skDis) / (2 * a));
-        *x_2 = ((-b - skDis) / (2 * a));
+        *x_2 = 0;
 
-        /*звпись *n, соответствующего дискриминанту */
+        // Вывод соответствующего значения
+        return ROOTS_1;
+    }
+    else
+    {
+        // Корень дискриминанта
+        skDis = sqrt(Dis);
 
-        if (fabs(Dis) < MIN_DELT)
-        {
-            *x_2 = 0;
-            return ROOTS_1;
-        }
-        else
-        {
-            return ROOTS_2;
-        }
+        // Вычисление x_1 и x_2
+        *x_1 = ((-b + skDis) / (2 * a));
+        *x_2 = ((-b - skDis) / (2 * a));;
+
+        // Вывод соответствующего значения
+        return ROOTS_2;
     }
 
     return ERROR;
 }
 
-int linerial (double b, double c, double *x)
+int linerial(double b, double c, double *x)
 {
-    *x = ((-c) / b);
-    return ROOTS_1;
-}
 
-int reshalka (double a, double b, double c, double* x_1, double* x_2)
-{
-    if ((fabs(a) < MIN_DELT) && (fabs(b) < MIN_DELT) && (fabs(c) < MIN_DELT))        //проверка условий бесконечного количества решений
+    assert(isinf(b));
+    assert(isinf(c));
+    assert(x == 0);
+
+    if ((fabs(b) <= MIN_DELT) && (fabs(c) <= MIN_DELT))        //проверка условий бесконечного количества решений
     {
         return ROOTS_INF;
     }
-    else if ((fabs(a) < MIN_DELT) && (fabs(b) > MIN_DELT))                           //роверка на выполнимость/необходимость приминения линейности
-    {
-        return linerial (b, c, x_1);
-    }
-    else if ((fabs(a) < MIN_DELT) && (fabs(b) < MIN_DELT) && (fabs(c) > MIN_DELT))   //проверка отсутствия корней из-за особенности переменных
+
+    else if ((fabs(b) <= MIN_DELT) && (fabs(c) > MIN_DELT))   //проверка отсутствия корней из-за особенности переменных
     {
         return ROOTS_0;
+    }
+    else if (fabs(b) > MIN_DELT)                           //роверка на выполнимость/необходимость приминения линейности
+    {
+        *x = ((-c) / b);
+        return ROOTS_1;
+    }
+
+    return ROOTS_1;
+}
+
+int reshalka(double a, double b, double c, double* x_1, double* x_2)
+{
+
+    assert(isinf(a));
+    assert(isinf(b));
+    assert(isinf(c));
+    assert(x_1 == 0);
+    assert(x_2 == 0);
+    assert(x_1 == x_2);
+
+    if (fabs(a) <= MIN_DELT)   //проверка условий бесконечного количества решений
+    {
+        return linerial(b, c, x_1);
     }
     else
     {
@@ -130,13 +172,20 @@ int reshalka (double a, double b, double c, double* x_1, double* x_2)
 int abc_scan(double *a, double *b, double *c)
 {
 
-    int take_stok = 0;          // Значение инициирующее подведение итога
-    int sk_out = 0;             // Значение для записи вывода об ошибкки
+    assert(a == 0);
+    assert(b == 0);
+    assert(c == 0);
+    assert(a == b);
+    assert(a == c);
+    assert(b == c);
+
+    int take_stok = 0;                    // Значение инициирующее подведение итога
+    int sc_out = 0;                       // Значение для записи вывода skan_variable
     double coef[NUM_OF_COEF] = {0, 0, 0}; // Массив для записи коэфициентов
-                                // [0]-a
-                                // [1]-b
-                                // [2]-c
-    int cell_nom = 0;           // номер итерируемой ячейки
+                                          // [0]-a
+                                          // [1]-b
+                                          // [2]-c
+    int cell_nom = 0;                     // номер итерируемой ячейки
 
     printf("==========================================================================\n");
     printf("Введите коэффициенты \n(для завершения программы введите %c): \n", END_SIMVOL);
@@ -144,13 +193,13 @@ int abc_scan(double *a, double *b, double *c)
     //начало проверок ввода числа
     while (cell_nom < NUM_OF_COEF)
     {
-        sk_out = skan_variable(NAME_VAR[cell_nom], &coef[cell_nom]);
+        sc_out = skan_variable(NAME_VAR[cell_nom], coef + cell_nom);
 
-        if (sk_out == NEED_TAKE_STOK)
+        if (sc_out == NEED_TAKE_STOK)
         {
             take_stok = 1;
         }
-        if (sk_out == END_PROGRAM)
+        if (sc_out == END_PROGRAM)
         {
             break;
         }
@@ -164,7 +213,7 @@ int abc_scan(double *a, double *b, double *c)
     *c = coef[2];
 
     //подведение итога, если ввод столкнулся с проблемами (повышает удобство чтения ответов т.к. собирает коэфициенты в одном месте)
-    if ((take_stok == 1) && (sk_out != END_PROGRAM))
+    if ((take_stok == 1) && (sc_out != END_PROGRAM))
     {
         printf("--------------------------------------------------------------------------\n");
         printf("a = %.*f\n", NUM_AF_POINT, *a);
@@ -175,7 +224,7 @@ int abc_scan(double *a, double *b, double *c)
     printf("--------------------------------------------------------------------------\n");
 
     //вывод значения определяющего завершить программу или продолжить
-    if (sk_out == END_PROGRAM)
+    if (sc_out == END_PROGRAM)
     {
         return END_PROGRAM;
     }
@@ -185,6 +234,9 @@ int abc_scan(double *a, double *b, double *c)
 
 int skan_variable(const char var_name[], double* var)
 {
+
+    assert (var == 0);
+    assert (var_name == "\n");
 
     int sc_chek = 0;         // Проверка наличия в вводе числа (первым в буфере)
     int sc_error = 0;        // Проверка наличия в воде символа кроме первого # и \n
@@ -216,7 +268,7 @@ int skan_variable(const char var_name[], double* var)
             sc_error = 1;
         }
 
-        if ((sc_chek != 1) && (end_simvol_chek ==1) && (sc_error != 1))
+        if ((sc_chek != 1) && (end_simvol_chek == 1) && (sc_error != 1))
         {
             if(end_question() == END_PROGRAM)
             {
@@ -228,7 +280,7 @@ int skan_variable(const char var_name[], double* var)
             }
         }
 
-        if ((sc_error == 1) || ((sc_chek == 1) && (end_simvol_chek ==1)))
+        if ((sc_error == 1) || ((sc_chek == 1) && (end_simvol_chek == 1)))
         {
             printf("Вы ошиблись при вводе значения\a\n");
             printf("(При вводе числа или символа завершения присутствуют лишние символы)\n");
@@ -236,7 +288,7 @@ int skan_variable(const char var_name[], double* var)
             out = NEED_TAKE_STOK;
         }
 
-        if ((sc_chek == 1) && (end_simvol_chek !=1) && (sc_error != 1))
+        if ((sc_chek == 1) && (end_simvol_chek != 1) && (sc_error != 1))
         {
             break;
         }
@@ -249,7 +301,7 @@ int skan_variable(const char var_name[], double* var)
 int end_question(void)
 {
 
-    char pr_end_Y_N;
+    char pr_end_Y_N = 'N';
 
     while(1)
         {
@@ -275,10 +327,6 @@ int end_question(void)
             else
             {
                 printf("Я не понял, давй заново\a\n");
-
-                //очистка буфера ввода
-                while (getchar() != '\n')
-                {;}
             }
         }
 }
@@ -302,7 +350,11 @@ void end_print()
 
 void overflow_alarm (double nom, char befor_variable[], char name_variable[], char after_variable[], bool* overflow)
 {
-    if(isinf(nom))
+
+    assert(isnan(nom));
+    assert(overflow == 0);
+
+    if (isinf(nom))
     {
         printf("%s%s%s", befor_variable, name_variable, after_variable);
         *overflow = true;
@@ -313,36 +365,129 @@ int unitest_reshalka(void)
 {
 
     int nom_of_unitest = 0;
-    double a=0, b=0, c=0;
-    double x_1=0, x_2=0;
+    double a = 0, b = 0, c = 0;
+    double x_1 = 0, x_2 = 0;
     int reshalka_error = OK;
 
-    while(nom_of_unitest < NUM_OF_UNITEST)
+    while (nom_of_unitest < NUM_OF_UNITEST_RESHALKA)
     {
         a = 0;
         b = 0;
         c = 0;
         x_1 = 0;
         x_2 = 0;
-        a = UNITEST_IN[nom_of_unitest][0];
-        b = UNITEST_IN[nom_of_unitest][1];
-        c = UNITEST_IN[nom_of_unitest][2];
+        a = UNITEST_IN_RESHALKA[nom_of_unitest][0];
+        b = UNITEST_IN_RESHALKA[nom_of_unitest][1];
+        c = UNITEST_IN_RESHALKA[nom_of_unitest][2];
         reshalka_error = reshalka (a, b, c, &x_1, &x_2);
-        if(((fabs(x_1 - UNITEST_OUT[nom_of_unitest][0])) > MIN_DELT) || ((fabs(x_2 - UNITEST_OUT[nom_of_unitest][1])) > MIN_DELT) || ((fabs(reshalka_error - UNITEST_OUT[nom_of_unitest][2])) > MIN_DELT))
+        if (((fabs(x_1 - UNITEST_OUT_RESHALKA[nom_of_unitest][0])) > MIN_DELT) || ((fabs(x_2 - UNITEST_OUT_RESHALKA[nom_of_unitest][1])) > MIN_DELT) || ((fabs(reshalka_error - UNITEST_OUT_RESHALKA[nom_of_unitest][2])) > MIN_DELT))
         {
-            printf("Юнитест %d провален\n", nom_of_unitest);
+            printf("reshalka юнитест %d провален\n", nom_of_unitest);
             printf("Ввод:\n");
             printf("a = %f\n", a);
             printf("b = %f\n", b);
             printf("c = %f\n", c);
-            printf("Ввод:   Ожидание   Реальность\n");
-            printf("x_1     %10f %10f\n", x_1, UNITEST_OUT[nom_of_unitest][0]);
-            printf("x_2     %10f %10f\n", x_2, UNITEST_OUT[nom_of_unitest][1]);
-            printf("res_err %10f %10f\n", reshalka_error, UNITEST_OUT[nom_of_unitest][2]);
-            return 0;
+            printf("Вывод:  |Реальность|  Ожидание\n");
+            printf("x_1     |%10f|%10f\n", x_1, UNITEST_OUT_RESHALKA[nom_of_unitest][0]);
+            printf("x_2     |%10f|%10f\n", x_2, UNITEST_OUT_RESHALKA[nom_of_unitest][1]);
+            printf("res_err |%10f|%10f\n", reshalka_error, UNITEST_OUT_RESHALKA[nom_of_unitest][2]);
+            return END_PROGRAM;
         }
         nom_of_unitest++;
     }
-    printf("Юнитест пройден\n");
-    return 1;
+    printf("reshalka прошла юнитесты\n");
+    return OK;
+}
+
+int unitest_qadrat(void)
+{
+
+    int nom_of_unitest = 0;
+    double a = 0, b = 0, c = 0;
+    double x_1 = 0, x_2 = 0;
+    int qadrat_error = OK;
+
+    while (nom_of_unitest < NUM_OF_UNITEST_QADRAT)
+    {
+        a = 0;
+        b = 0;
+        c = 0;
+        x_1 = 0;
+        x_2 = 0;
+        a = UNITEST_IN_QADRAT[nom_of_unitest][0];
+        b = UNITEST_IN_QADRAT[nom_of_unitest][1];
+        c = UNITEST_IN_QADRAT[nom_of_unitest][2];
+        qadrat_error = qadrat (a, b, c, &x_1, &x_2);
+        if (((fabs(x_1 - UNITEST_OUT_QADRAT[nom_of_unitest][0])) > MIN_DELT) || ((fabs(x_2 - UNITEST_OUT_QADRAT[nom_of_unitest][1])) > MIN_DELT) || ((fabs(qadrat_error - UNITEST_OUT_QADRAT[nom_of_unitest][2])) > MIN_DELT))
+        {
+            printf("qadrat юнитест %d провален\n", nom_of_unitest);
+            printf("Ввод:\n");
+            printf("a = %f\n", a);
+            printf("b = %f\n", b);
+            printf("c = %f\n", c);
+            printf("Вывод:  |Реальность|  Ожидание\n");
+            printf("x_1     |%10f|%10f\n", x_1, UNITEST_OUT_QADRAT[nom_of_unitest][0]);
+            printf("x_2     |%10f|%10f\n", x_2, UNITEST_OUT_QADRAT[nom_of_unitest][1]);
+            printf("res_err |%10f|%10f\n", qadrat_error, UNITEST_OUT_QADRAT[nom_of_unitest][2]);
+            return END_PROGRAM;
+        }
+        nom_of_unitest++;
+    }
+    printf("qadrat прошла юнитесты\n");
+    return OK;
+}
+
+int unitest_linerial(void)
+{
+
+    int nom_of_unitest = 0;
+    double b = 0, c = 0;
+    double x_1 = 0, x_2 = 0;
+    int linerial_error = OK;
+
+    while (nom_of_unitest < NUM_OF_UNITEST_LINERIAL)
+    {
+        b = 0;
+        c = 0;
+        x_1 = 0;
+
+        b = UNITEST_IN_LINERIAL[nom_of_unitest][0];
+        c = UNITEST_IN_LINERIAL[nom_of_unitest][1];
+        linerial_error = linerial (b, c, &x_1);
+        if (((fabs(x_1 - UNITEST_OUT_LINERIAL[nom_of_unitest][0])) > MIN_DELT) || ((fabs(linerial_error - UNITEST_OUT_LINERIAL[nom_of_unitest][1])) > MIN_DELT))
+        {
+            printf("linerial юнитест %d провален\n", nom_of_unitest);
+            printf("Ввод:\n");
+            printf("b = %f\n", b);
+            printf("c = %f\n", c);
+            printf("Вывод:  |Реальность|  Ожидание\n");
+            printf("x_1     |%10f|%10f\n", x_1, UNITEST_OUT_LINERIAL[nom_of_unitest][0]);
+            printf("res_err |%10f|%10f\n", linerial_error, UNITEST_OUT_LINERIAL[nom_of_unitest][1]);
+            return END_PROGRAM;
+        }
+        nom_of_unitest++;
+    }
+    printf("qadrat прошла юнитесты\n");
+    return OK;
+}
+
+int unitest(void)
+{
+
+    if (unitest_qadrat() == END_PROGRAM)
+    {
+        return END_PROGRAM;
+    }
+
+    if (unitest_linerial() == END_PROGRAM)
+    {
+        return END_PROGRAM;
+    }
+
+    if (unitest_reshalka() == END_PROGRAM)
+    {
+        return END_PROGRAM;
+    }
+
+    return OK;
 }
