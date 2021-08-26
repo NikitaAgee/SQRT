@@ -1,10 +1,12 @@
+#include "Pre_Qadratik.h"
+
 
 bool abc_lim_over_print(double a, double b, double c)
 {
 
-    assert(isnan(a));
-    assert(isnan(b));
-    assert(isnan(c));
+    assert(!isnan(a));
+    assert(!isnan(b));
+    assert(!isnan(c));
 
     // Определение сообщения о переполнении перед выводом названия переменной, которая переполнена
     char* befor_variable = "Слишком большой (по модулю) коэфициент: ";
@@ -22,8 +24,8 @@ bool abc_lim_over_print(double a, double b, double c)
 void x_lim_over_print(double x_1, double x_2, int root_count)
 {
 
-    assert(isnan(x_1));
-    assert(isnan(x_2));
+    assert(!isnan(x_1));
+    assert(!isnan(x_2));
 
     char* befor_variable = "Слишком большой (по модулю) корень: ";
     bool overflow = false;
@@ -68,13 +70,12 @@ void x_lim_over_print(double x_1, double x_2, int root_count)
 
 int qadrat(double a, double b, double c, double *x_1, double *x_2)
 {
-
-    assert(isinf(a));
-    assert(isinf(b));
-    assert(isinf(c));
-    assert(x_1 == 0);
-    assert(x_2 == 0);
-    assert(x_1 == x_2);
+    assert(!isinf(a));
+    assert(!isinf(b));
+    assert(!isinf(c));
+    assert(!(x_1 == 0));
+    assert(!(x_2 == 0));
+    assert(!(x_1 == x_2));
 
     double Dis = 0;   // Дискриминант
     double skDis = 0; // Корень дискриминанта
@@ -127,9 +128,9 @@ int qadrat(double a, double b, double c, double *x_1, double *x_2)
 int linerial(double b, double c, double *x)
 {
 
-    assert(isinf(b));
-    assert(isinf(c));
-    assert(x == 0);
+    assert(!isinf(b));
+    assert(!isinf(c));
+    assert(!(x == 0));
 
     if ((fabs(b) <= MIN_DELT) && (fabs(c) <= MIN_DELT))        //проверка условий бесконечного количества решений
     {
@@ -152,12 +153,12 @@ int linerial(double b, double c, double *x)
 int reshalka(double a, double b, double c, double* x_1, double* x_2)
 {
 
-    assert(isinf(a));
-    assert(isinf(b));
-    assert(isinf(c));
-    assert(x_1 == 0);
-    assert(x_2 == 0);
-    assert(x_1 == x_2);
+    assert(!isinf(a));
+    assert(!isinf(b));
+    assert(!isinf(c));
+    assert(!(x_1 == 0));
+    assert(!(x_2 == 0));
+    assert(!(x_1 == x_2));
 
     if (fabs(a) <= MIN_DELT)   //проверка условий бесконечного количества решений
     {
@@ -172,12 +173,12 @@ int reshalka(double a, double b, double c, double* x_1, double* x_2)
 int abc_scan(double *a, double *b, double *c)
 {
 
-    assert(a == 0);
-    assert(b == 0);
-    assert(c == 0);
-    assert(a == b);
-    assert(a == c);
-    assert(b == c);
+    assert(!(a == 0));
+    assert(!(b == 0));
+    assert(!(c == 0));
+    assert(!(a == b));
+    assert(!(a == c));
+    assert(!(b == c));
 
     int take_stok = 0;                    // Значение инициирующее подведение итога
     int sc_out = 0;                       // Значение для записи вывода skan_variable
@@ -235,8 +236,8 @@ int abc_scan(double *a, double *b, double *c)
 int skan_variable(const char var_name[], double* var)
 {
 
-    assert (var == 0);
-    assert (var_name == "\n");
+    assert (!(var == 0));
+    assert (!(var_name == "\n"));
 
     int sc_chek = 0;         // Проверка наличия в вводе числа (первым в буфере)
     int sc_error = 0;        // Проверка наличия в воде символа кроме первого # и \n
@@ -331,13 +332,13 @@ int end_question(void)
         }
 }
 
-void start_print()
+void start_print(void)
 {
     printf("==========================================================================\n");
     printf("                   Решение уравнения a*x^2+b*x+c=0                        \n");
 }
 
-void end_print()
+void end_print(void)
 {
     printf("==========================================================================\n");
     printf("Программа завершена\n");
@@ -351,8 +352,8 @@ void end_print()
 void overflow_alarm (double nom, char befor_variable[], char name_variable[], char after_variable[], bool* overflow)
 {
 
-    assert(isnan(nom));
-    assert(overflow == 0);
+    assert(!(isnan(nom)));
+    assert(!(overflow == 0));
 
     if (isinf(nom))
     {
@@ -361,130 +362,10 @@ void overflow_alarm (double nom, char befor_variable[], char name_variable[], ch
     }
 }
 
-int unitest_reshalka(void)
-{
-
-    int nom_of_unitest = 0;
-    double a = 0, b = 0, c = 0;
-    double x_1 = 0, x_2 = 0;
-    int reshalka_error = OK;
-
-    while (nom_of_unitest < NUM_OF_UNITEST_RESHALKA)
-    {
-        a = 0;
-        b = 0;
-        c = 0;
-        x_1 = 0;
-        x_2 = 0;
-        a = UNITEST_IN_RESHALKA[nom_of_unitest][0];
-        b = UNITEST_IN_RESHALKA[nom_of_unitest][1];
-        c = UNITEST_IN_RESHALKA[nom_of_unitest][2];
-        reshalka_error = reshalka (a, b, c, &x_1, &x_2);
-        if (((fabs(x_1 - UNITEST_OUT_RESHALKA[nom_of_unitest][0])) > MIN_DELT) || ((fabs(x_2 - UNITEST_OUT_RESHALKA[nom_of_unitest][1])) > MIN_DELT) || ((fabs(reshalka_error - UNITEST_OUT_RESHALKA[nom_of_unitest][2])) > MIN_DELT))
-        {
-            printf("reshalka юнитест %d провален\n", nom_of_unitest);
-            printf("Ввод:\n");
-            printf("a = %f\n", a);
-            printf("b = %f\n", b);
-            printf("c = %f\n", c);
-            printf("Вывод:  |Реальность|  Ожидание\n");
-            printf("x_1     |%10f|%10f\n", x_1, UNITEST_OUT_RESHALKA[nom_of_unitest][0]);
-            printf("x_2     |%10f|%10f\n", x_2, UNITEST_OUT_RESHALKA[nom_of_unitest][1]);
-            printf("res_err |%10f|%10f\n", reshalka_error, UNITEST_OUT_RESHALKA[nom_of_unitest][2]);
-            return END_PROGRAM;
-        }
-        nom_of_unitest++;
-    }
-    printf("reshalka прошла юнитесты\n");
-    return OK;
-}
-
-int unitest_qadrat(void)
-{
-
-    int nom_of_unitest = 0;
-    double a = 0, b = 0, c = 0;
-    double x_1 = 0, x_2 = 0;
-    int qadrat_error = OK;
-
-    while (nom_of_unitest < NUM_OF_UNITEST_QADRAT)
-    {
-        a = 0;
-        b = 0;
-        c = 0;
-        x_1 = 0;
-        x_2 = 0;
-        a = UNITEST_IN_QADRAT[nom_of_unitest][0];
-        b = UNITEST_IN_QADRAT[nom_of_unitest][1];
-        c = UNITEST_IN_QADRAT[nom_of_unitest][2];
-        qadrat_error = qadrat (a, b, c, &x_1, &x_2);
-        if (((fabs(x_1 - UNITEST_OUT_QADRAT[nom_of_unitest][0])) > MIN_DELT) || ((fabs(x_2 - UNITEST_OUT_QADRAT[nom_of_unitest][1])) > MIN_DELT) || ((fabs(qadrat_error - UNITEST_OUT_QADRAT[nom_of_unitest][2])) > MIN_DELT))
-        {
-            printf("qadrat юнитест %d провален\n", nom_of_unitest);
-            printf("Ввод:\n");
-            printf("a = %f\n", a);
-            printf("b = %f\n", b);
-            printf("c = %f\n", c);
-            printf("Вывод:  |Реальность|  Ожидание\n");
-            printf("x_1     |%10f|%10f\n", x_1, UNITEST_OUT_QADRAT[nom_of_unitest][0]);
-            printf("x_2     |%10f|%10f\n", x_2, UNITEST_OUT_QADRAT[nom_of_unitest][1]);
-            printf("res_err |%10f|%10f\n", qadrat_error, UNITEST_OUT_QADRAT[nom_of_unitest][2]);
-            return END_PROGRAM;
-        }
-        nom_of_unitest++;
-    }
-    printf("qadrat прошла юнитесты\n");
-    return OK;
-}
-
-int unitest_linerial(void)
-{
-
-    int nom_of_unitest = 0;
-    double b = 0, c = 0;
-    double x_1 = 0, x_2 = 0;
-    int linerial_error = OK;
-
-    while (nom_of_unitest < NUM_OF_UNITEST_LINERIAL)
-    {
-        b = 0;
-        c = 0;
-        x_1 = 0;
-
-        b = UNITEST_IN_LINERIAL[nom_of_unitest][0];
-        c = UNITEST_IN_LINERIAL[nom_of_unitest][1];
-        linerial_error = linerial (b, c, &x_1);
-        if (((fabs(x_1 - UNITEST_OUT_LINERIAL[nom_of_unitest][0])) > MIN_DELT) || ((fabs(linerial_error - UNITEST_OUT_LINERIAL[nom_of_unitest][1])) > MIN_DELT))
-        {
-            printf("linerial юнитест %d провален\n", nom_of_unitest);
-            printf("Ввод:\n");
-            printf("b = %f\n", b);
-            printf("c = %f\n", c);
-            printf("Вывод:  |Реальность|  Ожидание\n");
-            printf("x_1     |%10f|%10f\n", x_1, UNITEST_OUT_LINERIAL[nom_of_unitest][0]);
-            printf("res_err |%10f|%10f\n", linerial_error, UNITEST_OUT_LINERIAL[nom_of_unitest][1]);
-            return END_PROGRAM;
-        }
-        nom_of_unitest++;
-    }
-    printf("qadrat прошла юнитесты\n");
-    return OK;
-}
-
 int unitest(void)
 {
 
-    if (unitest_qadrat() == END_PROGRAM)
-    {
-        return END_PROGRAM;
-    }
-
-    if (unitest_linerial() == END_PROGRAM)
-    {
-        return END_PROGRAM;
-    }
-
-    if (unitest_reshalka() == END_PROGRAM)
+    if ((unitest_qadrat() == END_PROGRAM) || (unitest_linerial() == END_PROGRAM) || (unitest_reshalka() == END_PROGRAM))
     {
         return END_PROGRAM;
     }
